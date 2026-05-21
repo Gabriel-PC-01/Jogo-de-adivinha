@@ -1,123 +1,102 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
 #include <string.h>
+#include <time.h>
 
-
-
+#define VERY_EASY 5
+#define EASY 20
+#define NORMAL 10
+#define HARD 5
+#define VERY_HARD 10
 
 #define SIZE_STRING_NAME 50
 
-
-
-
 int get_string(char *string);
 
-
-int draw_number(int *range);
-
+int draw_number(int range);
 
 int initial_screen(char *player_name);
 
-
 void clean_screen();
-
 
 void dif_screen(int *attempts, int *range);
 
+int match_sreen(int random_number, int attempts);
 
+void win_defeat_screen(int match_result);
 
-
-int main(void){
+int main(void) {
 
   char current_user_name[50];
-  int tentativas, intervalo; 
+  int tentativas, intervalo, numero_secreto, resultado;
 
+  if (initial_screen(current_user_name) == 1) {
 
-  if(initial_screen(current_user_name) == 1){
-
-      printf("Problema na leitura de string");
+    printf("Problema na leitura de string");
   }
 
   dif_screen(&tentativas, &intervalo);
 
+  numero_secreto = draw_number(intervalo);
+
+  resultado = match_sreen(numero_secreto, tentativas);
+
+  win_defeat_screen(resultado);
+
   return 0;
 }
 
+int draw_number(int range) {
 
+  int random_number;
+  srand(time(NULL));
 
+  random_number = (rand() % (range)) + 1;
 
-int draw_number(int *range){
-
-    srand(time(NULL));
-
-    *range = (rand() % *range) + 1;
-
-
-    return *range;
+  return random_number;
 }
 
+int initial_screen(char *player_name) {
 
+  printf("*********************************************************************"
+         "*************************************************\n");
+  printf("\t\t\t\t\t\tBEM-VINDO AO JOGO DE ADIVINHAÇÃO\n");
+  printf("*********************************************************************"
+         "*************************************************\n");
 
+  printf("\n\n\n \t\t\t\t\t\t informe o nome do jogador:\n\n");
+  int output = get_string(player_name);
 
-int initial_screen(char *player_name){
-
-
-
-    printf("**********************************************************************************************************************\n");
-    printf("\t\t\t\t\t\tBEM-VINDO AO JOGO DE ADIVINHAÇÃO\n");
-    printf("**********************************************************************************************************************\n");
-
-    printf("\n\n\n \t\t\t\t\t\t informe o nome do jogador:\n\n");
-    int output = get_string(player_name); 
-        
-    
-    return output;
-
+  return output;
 }
 
+void clean_screen() {
 
-
-void clean_screen(){
-
-
-    #ifdef _WIN32
-        system("cls");
-    #elif __linux__
-        system("clear");
-    #endif
-
-
+#ifdef _WIN32
+  system("cls");
+#elif __linux__
+  system("clear");
+#endif
 }
-
-
 
 int get_string(char *string) {
-    
-    
-    int c;
 
-    if (fgets(string, SIZE_STRING_NAME, stdin) == NULL) {
-        return 1;
-    }
+  int c;
 
-    string[strcspn(string, "\n")] = '\0';
+  if (fgets(string, SIZE_STRING_NAME, stdin) == NULL) {
+    return 1;
+  }
 
-    return 0;
+  string[strcspn(string, "\n")] = '\0';
+
+  return 0;
 }
 
-
-
-
-
-void dif_screen(int *attempts, int *range){
-
+void dif_screen(int *attempts, int *range) {
 
   clean_screen();
 
-
   int choice;
-
 
   printf("Escolha a dificuladade\n\n\n");
 
@@ -126,49 +105,134 @@ void dif_screen(int *attempts, int *range){
   printf("\t\t\t\t\t\t 3 - normal: numeros de 0-100, 10 tentativas\n");
   printf("\t\t\t\t\t\t 4 - difícil: numeros de 0-100, 5 tentativas\n");
   printf("\t\t\t\t\t\t 5 - muito difícil: numeros de 0-1000, 10 tentativas\n");
+  printf("\t\t\t\t\t\t 6 - custom : Escolha a quantidade de tentativas e "
+         "numeros \n");
 
   printf("Faça sua escolha:");
   scanf("%d", &choice);
 
   switch (choice) {
 
-    case 1 :
+  case 1:
 
-      *range = 10;
-      *attempts = 5;
-
-    break;
-
-     case 2 :
-
-      *range = 100;
-      *attempts = 20;
+    *range = 10;
+    *attempts = VERY_EASY;
 
     break;
 
-    case 3:
+  case 2:
 
-      *range = 100;
-      *attempts = 10;
-
-    break;
-
-    case 4:
-
-      *range = 100;
-      *attempts = 5;
+    *range = 100;
+    *attempts = EASY;
 
     break;
 
-    case 5:
+  case 3:
 
-      *range = 1000;
-      *attempts = 10;
+    *range = 100;
+    *attempts = NORMAL;
+
+    break;
+
+  case 4:
+
+    *range = 100;
+    *attempts = HARD;
+
+    break;
+
+  case 5:
+
+    *range = 1000;
+    *attempts = VERY_HARD;
+
+    break;
+
+  case 6:
+
+    printf("\n\n Escolha a quatidade máxima de numeros que iram aparecer:");
+    scanf("%d", range);
+    printf("\n\n Escolha a quantidade de tentativas:");
+    scanf("%d", attempts);
 
     break;
   }
-
-
-
 }
 
+int match_sreen(int random_number, int attempts) {
+
+  clean_screen();
+
+  int bet_number;
+
+  printf("\t\t\t\t\t\t QUE O O JOGO COMEÇE\n\n\n");
+
+  for (int i = 1; i <= attempts; i++) {
+
+    printf("___________________________________________________________________"
+           "______________________________\n\n");
+    printf("\t\t\t\t\t\t Escolha qual numero voce quer\n\n\n");
+    printf("\t\t\t\t\t\t\t\t\t\t");
+    scanf("%d", &bet_number);
+
+    if (bet_number < random_number) {
+      printf("\t\t\t\t\t\t\t pequeno demais\n\n");
+    } else if (bet_number > random_number) {
+      printf("\t\t\t\t\t\t\t alto demais\n\n");
+    } else {
+      return 1;
+    }
+
+    printf("___________________________________________________________________"
+           "______________________________\n");
+  }
+
+  return 0;
+}
+
+
+void win_defeat_screen(int match_result){
+
+
+ if(match_result){
+
+        printf(
+        "░░░░░░░░░░░░░░░░░░░░░░░░░░░░░\n"
+        "░░░░█▀▀▀░█▀▀▀░░█▀▀░▀▀█░░█░░░░\n"
+        "░░░░█░▀█░█░▀█░░█▀▀░▄▀░░░▀░░░░\n"
+        "░░░░▀▀▀▀░▀▀▀▀░░▀▀▀░▀▀▀░░▀░░░░\n"
+        "░░░░░░░░░░░░░░░░░░░░░░░░░░░░░\n\n");
+  }else{
+
+      printf(      "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⣤⣤⣴⣶⣶⣶⣾⣿⣿⣿⣿⣶⣶⣶⠆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
+        "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣤⣤⣶⣿⡿⠿⠿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠛⠻⣷⣤⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
+        "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⡾⠛⠉⠀⠀⠀⠀⠀⠀⠀⠀⠈⣉⣉⣿⣿⡿⠛⠛⠛⠀⠀⠀⠉⢻⣆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
+        "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣾⠟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢰⣿⣿⣿⣿⠁⠀⠀⠀⠀⠀⠀⠀⠀⠻⣷⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
+        "⠀⠀⠀⠀⠀⠀⠀⠀⣀⣴⠟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣼⣿⣿⣿⣿⡄⠀⠀⣀⣤⡤⢤⣀⠀⠀⢹⣿⣦⡀⠀⠀⠀⠀⠀⠀⠀\n"
+        "⠀⠀⠀⢴⣶⡶⢿⣿⣿⣿⣦⣄⣀⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⢰⣿⣿⣿⡿⠋⢀⣴⡿⠟⠋⠀⠀⠻⣷⣦⡀⢿⣿⣿⡄⠀⠀⠀⠀⠀⠀\n"
+        "⠀⠀⠀⠀⢀⣴⡿⠛⠉⠉⠉⠙⠻⢿⣿⣿⣦⠀⠀⠀⠀⠀⠀⣾⣿⣿⡿⠁⣠⣾⠋⠀⠀⠀⢰⣆⠀⠈⠛⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀⠀\n"
+        "⠀⠀⠀⣾⣿⠋⠀⠀⠀⠀⠀⠀⠀⠀⠹⣿⡁⠀⠀⠀⠀⠀⠀⢹⣿⣿⠃⢰⡿⠁⠀⠀⠀⠀⠀⢿⣦⣀⣠⡟⢻⣿⣿⣿⡆⠀⠀⠀⠀⠀\n"
+        "⠀⠀⣸⣿⠃⠀⠀⠀⠀⣠⣴⠞⠋⠉⠛⠻⣷⣦⡀⠀⠀⠀⠀⠸⣿⠿⠀⣿⠁⠀⠀⠀⠀⠀⠀⠀⠉⠉⠉⠁⠀⢹⡟⢿⣿⡄⠀⠀⠀⠀\n"
+        "⠀⢀⣿⡏⠀⠀⠀⢠⡾⠋⠁⠀⠀⠀⠀⠀⠀⠻⣿⣦⡀⠀⠀⠀⠀⠀⠀⢿⣆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⣿⠀⢻⣿⣄⠀⠀⠀\n"
+        "⠀⢸⣿⠁⠀⠀⠀⡾⠳⠶⣶⡀⠀⠀⠀⠀⠀⠀⠙⠻⣷⠀⠀⠀⠀⠀⠀⠈⠻⣦⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⠀⠀⢻⣿⣆⠀⠀\n"
+        "⠀⣾⡏⠀⠀⠀⠀⢃⣠⣴⣿⠃⠀⠀⠀⠀⠀⠀⠀⣰⡟⠀⠀⢀⣀⣀⣀⣀⣀⡈⠻⣦⣄⡀⠀⠀⠀⠀⠀⠀⢀⣤⠆⠀⠀⠈⣿⣿⡆⠀\n"
+        "⠀⣿⠃⠀⠀⠀⠰⣿⠋⠉⠀⠀⠀⠀⠀⠀⠀⢀⣼⠟⠀⣴⡿⢛⠉⠉⠉⢋⠉⠙⢛⡿⣿⡟⠳⠶⠶⠶⠶⠞⠋⠁⠀⠀⠀⠀⢹⣿⣿⠀\n"
+        "⢠⣿⠀⠀⠀⠀⠀⢿⡆⠀⠀⠀⠀⠀⠀⠀⣠⡿⠋⢀⣼⠋⠀⢹⣧⡀⠀⣿⠿⠶⠾⠃⠈⠙⠻⢶⣤⣤⣤⣤⣄⠀⠀⠀⠀⠀⠀⢻⣿⡇\n"
+        "⢸⡇⠀⠀⠀⠀⠀⠈⠻⣦⡀⠀⠀⠀⢀⣼⠋⠀⣠⡾⢳⡄⠀⠀⢻⠛⠳⠿⠀⠀⠀⠀⠀⠀⠀⠀⠈⠛⠛⠋⠙⢧⠀⠀⠀⠀⠀⠘⣿⡇\n"
+        "⣸⡇⠀⠀⠀⠀⠀⠀⠀⠀⠉⠓⠒⠒⠛⠁⠀⠀⣿⠁⢸⣿⣦⣤⣾⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⣷⡀⠀⠀⠀⠀⣿⡇\n"
+        "⣿⣇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣿⠦⠾⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣀⠀⠀⠀⠀⠀⠀⠀⠘⢿⡄⠀⠀⠀⢻⡇\n"
+        "⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⡿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣴⠿⠋⠙⢷⣄⠀⠀⠀⠀⠀⠀⠈⣧⠀⠀⠀⢸⡇\n"
+        "⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⡇⠀⠀⠀⠀⠀⠀⢀⣤⠖⠚⠿⠿⠋⠀⠀⠀⢀⣿⣦⣀⡾⠛⠻⣶⡄⢸⠀⠀⠀⣼⡇\n"
+        "⢻⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⠀⠀⠀⠀⠀⠀⢀⣾⠇⠀⠀⠀⠀⠀⣀⡀⠀⣾⠁⠀⢻⡇⠀⠀⠀⢁⣾⠀⠀⠀⢹⣇\n"
+        "⠘⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⡏⠀⠀⠀⠀⠀⠀⠾⠏⠀⠀⠀⢰⣿⠋⠉⠻⣿⠏⣀⣤⣬⣤⣤⣤⣴⠿⠃⠀⠀⠀⠸⣿\n"
+        "⠀⠹⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⠀⠀⠀⠀⠀⠀⠀⣀⣤⣤⣤⠀⣼⡏⠀⠀⢀⣴⠞⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣿\n"
+        "⠀⠀⠹⣿⡆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣼⠃⠀⠀⠀⠀⠀⠀⣴⡟⠁⠀⠹⠿⠿⠁⣤⡶⠛⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣾⡿\n"
+        "⠀⠀⠀⠹⣿⣄⠀⠀⠀⠀⠀⠀⠀⠀⣼⠃⠀⣴⡾⠿⣿⣄⣸⡏⠀⠀⠀⢀⣠⠶⠈⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣾⡟⠁\n"
+        "⠀⠀⠀⠀⣿⠹⣷⣄⠀⠀⠀⠀⠀⠀⠿⣶⣾⣧⣀⣀⠀⠙⠋⢀⣤⡶⠞⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣼⡿⠀⠀\n"
+        "⠀⠀⠀⠀⢹⡄⠈⠻⣷⣦⡀⠀⠀⠀⠀⠀⠈⠉⠉⠉⠙⠛⠛⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢰⣿⠃⠀⠀\n"
+        "⠀⠀⠀⠀⠈⢷⡄⠀⠀⠙⢛⠷⠄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⠃⠀⠀⠀\n"
+    );
+
+  } 
+
+}

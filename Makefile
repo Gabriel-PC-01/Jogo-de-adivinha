@@ -1,5 +1,5 @@
 all:
-	gcc adivinha.c -o exec
+	gcc -g adivinha.c -o exec
 	./exec
 
 clear:
