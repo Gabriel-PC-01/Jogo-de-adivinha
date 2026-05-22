@@ -21,14 +21,15 @@ void clean_screen();
 
 void dif_screen(int *attempts, int *range);
 
-int match_sreen(int random_number, int attempts);
+int match_sreen(int random_number, int attempts, int *points);
 
-void win_defeat_screen(int match_result);
+void win_defeat_screen(int match_result, int points);
 
 int main(void) {
 
   char current_user_name[50];
   int tentativas, intervalo, numero_secreto, resultado;
+  int points = 1000;
 
   if (initial_screen(current_user_name) == 1) {
 
@@ -39,9 +40,9 @@ int main(void) {
 
   numero_secreto = draw_number(intervalo);
 
-  resultado = match_sreen(numero_secreto, tentativas);
+  resultado = match_sreen(numero_secreto, tentativas, &points);
 
-  win_defeat_screen(resultado);
+  win_defeat_screen(resultado, points);
 
   return 0;
 }
@@ -159,7 +160,7 @@ void dif_screen(int *attempts, int *range) {
   }
 }
 
-int match_sreen(int random_number, int attempts) {
+int match_sreen(int random_number, int attempts, int *points) {
 
   clean_screen();
 
@@ -171,14 +172,19 @@ int match_sreen(int random_number, int attempts) {
 
     printf("___________________________________________________________________"
            "______________________________\n\n");
+
+    printf("\t\t\t\t\t\t Você tem %d tentativas:\n\n", (attempts + 1) - i);
+
     printf("\t\t\t\t\t\t Escolha qual numero voce quer\n\n\n");
-    printf("\t\t\t\t\t\t\t\t\t\t");
+    printf("\t\t\t\t\t\t\t\t");
     scanf("%d", &bet_number);
 
     if (bet_number < random_number) {
       printf("\t\t\t\t\t\t\t pequeno demais\n\n");
+      (*points) = (*points) / 2;
     } else if (bet_number > random_number) {
       printf("\t\t\t\t\t\t\t alto demais\n\n");
+      (*points) = (*points) / 2;
     } else {
       return 1;
     }
@@ -191,11 +197,12 @@ int match_sreen(int random_number, int attempts) {
 }
 
 
-void win_defeat_screen(int match_result){
+void win_defeat_screen(int match_result, int points){
 
 
  if(match_result){
 
+    printf("Seu numero de pontos foir: %d\n\n", points);
         printf(
         "░░░░░░░░░░░░░░░░░░░░░░░░░░░░░\n"
         "░░░░█▀▀▀░█▀▀▀░░█▀▀░▀▀█░░█░░░░\n"
@@ -203,6 +210,8 @@ void win_defeat_screen(int match_result){
         "░░░░▀▀▀▀░▀▀▀▀░░▀▀▀░▀▀▀░░▀░░░░\n"
         "░░░░░░░░░░░░░░░░░░░░░░░░░░░░░\n\n");
   }else{
+
+    printf("Você perdeu infizmente\n\n");
 
       printf(      "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⣤⣤⣴⣶⣶⣶⣾⣿⣿⣿⣿⣶⣶⣶⠆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
         "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣤⣤⣶⣿⡿⠿⠿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠛⠻⣷⣤⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
